@@ -6,8 +6,10 @@
 #define INITIAL_CAPACITY 8
 
 typedef struct {
+	int id;
 	int arrivalTime;
 	int duration;
+	int startTime;
 	int isDone;
 } Process;
 
@@ -38,6 +40,7 @@ Process *parseInput(int *outCount) {
 		}
 		if(sscanf(buffer, "%d %d", &processes[processCount].arrivalTime, &processes[processCount].duration)==2) {
 			processes[processCount].isDone = 0;
+			processes[processCount].id = processCount;
 			processCount++;
 		} else {
 			fprintf(stderr, "Incorrect line format in line %d\n", lineCount);
@@ -58,6 +61,17 @@ int comparProcesses(const void *a, const void *b) {
 	return (processA->arrivalTime - processB->arrivalTime);
 }
 
+void algoFCFS(Process processes[], int processCount) {
+	int currentTime = 0;
+	int i;
+	for(i=0;i < processCount;i++) {
+		if(currentTime < processes[i].arrivalTime) currentTime = processes[i].arrivalTime;
+		processes[i].startTime = currentTime;
+		currentTime += processes[i].duration;
+		processes[i].isDone = 1;
+	}
+}
+
 int main(int argc, char *argv[]) {
 	char algorithm = '\x00';
 	int opt;
@@ -73,8 +87,8 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	if (algorithm == '\x00') {
-    	fprintf(stderr, "No algorithm chosen! Use -h flag for help!");
-    	return 1;
+		fprintf(stderr, "No algorithm chosen! Use -h flag for help!\n");
+		return 1;
 	}
 
 	int processCount = 0;
@@ -85,12 +99,25 @@ int main(int argc, char *argv[]) {
 
 	switch (algorithm) {
 		case 'f':
-			//algoFCFS();	// TODO
+			algoFCFS(processes, processCount);	// TODO
 			break;
 		case 'l':
 			//algoLCSF();	// TODO
 			break;
-
+	}
+	printf("ID,Time of arrival,Duration,Time of start,Time of finish,Waiting time,Turnaround\n");
+	int i;
+	for(i=0;i<processCount;i++) {
+		int finishTime = processes[i].startTime+processes[i].duration;
+		printf("%i,%i,%i,%i,%i,%i,%i\n",
+				processes[i].id,
+				processes[i].arrivalTime,
+				processes[i].duration,
+				processes[i].startTime,
+				finishTime,
+				processes[i].startTime - processes[i].arrivalTime,
+				finishTime - processes[i].arrivalTime
+		);
 	}
 	free(processes);
 	return 0;
