@@ -72,6 +72,34 @@ void algoFCFS(Process processes[], int processCount) {
 	}
 }
 
+void algoLCFS(Process processes[], int processCount) {
+	int currentTime=0;
+	int processCompleted = 0;
+	while(processCompleted < processCount) {
+		int lastCome = -1, lastComeTime = -1;
+		int i;
+		for(i=0;i<processCount;i++) {
+			if(processes[i].isDone == 0 && processes[i].arrivalTime <= currentTime && processes[i].arrivalTime > lastComeTime) {
+				lastCome = i;
+				lastComeTime = processes[i].arrivalTime;
+			}
+		}
+		if(lastCome == -1) {
+			for(i=0;i<processCount;i++) {
+				if(processes[i].isDone == 0) {
+					currentTime = processes[i].arrivalTime;
+					lastCome = i;
+					break;
+				}
+			}
+		}
+		processes[lastCome].isDone = 1;
+		processes[lastCome].startTime = currentTime;
+		processCompleted++;
+		currentTime += processes[lastCome].duration;
+	}
+}
+
 int main(int argc, char *argv[]) {
 	char algorithm = '\x00';
 	int opt;
@@ -99,10 +127,10 @@ int main(int argc, char *argv[]) {
 
 	switch (algorithm) {
 		case 'f':
-			algoFCFS(processes, processCount);	// TODO
+			algoFCFS(processes, processCount);
 			break;
 		case 'l':
-			//algoLCSF();	// TODO
+			algoLCFS(processes, processCount);
 			break;
 	}
 	printf("ID,Time of arrival,Duration,Time of start,Time of finish,Waiting time,Turnaround\n");
