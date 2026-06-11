@@ -18,7 +18,8 @@ Process *parseInput(int *outCount) {
 	int processCount = 0;
 	int capacity = INITIAL_CAPACITY;
 	int lineCount = 0;
-
+	
+	// Initial allocation of processes table in memory
 	Process *processes = malloc(capacity * sizeof(Process));
 	if (processes == NULL) {
 		fprintf(stderr, "Memory allocation failed!\n");
@@ -28,6 +29,8 @@ Process *parseInput(int *outCount) {
 	while (fgets(buffer, sizeof(buffer), stdin) != NULL) {
 		lineCount++;
 		if (buffer[0] == '\n') continue;
+
+		// Increase allocated memory for processes table if its too long - dinamic size
 		if (processCount >= capacity) {
 			capacity *= 2;
 			Process *tmp = realloc(processes, capacity*sizeof(Process));
@@ -38,6 +41,8 @@ Process *parseInput(int *outCount) {
 			}
 			processes = tmp;
 		}
+
+		// Taking input from sdtin
 		if(sscanf(buffer, "%d %d", &processes[processCount].arrivalTime, &processes[processCount].duration)==2) {
 			processes[processCount].isDone = 0;
 			processes[processCount].id = processCount;
@@ -54,6 +59,7 @@ Process *parseInput(int *outCount) {
 
 }
 
+// Comparating function for qsort()
 int comparProcesses(const void *a, const void *b) {
 	const Process *processA = (const Process*)a;
 	const Process *processB = (const Process*)b;
@@ -65,6 +71,8 @@ void algoFCFS(Process processes[], int processCount) {
 	int currentTime = 0;
 	int i;
 	for(i=0;i < processCount;i++) {
+
+		// Wait if no porcess has arrived
 		if(currentTime < processes[i].arrivalTime) currentTime = processes[i].arrivalTime;
 		processes[i].startTime = currentTime;
 		currentTime += processes[i].duration;
@@ -76,6 +84,8 @@ void algoLCFS(Process processes[], int processCount) {
 	int currentTime=0;
 	int processCompleted = 0;
 	while(processCompleted < processCount) {
+
+		// Setting to -1 to check if no match has been found
 		int lastCome = -1, lastComeTime = -1;
 		int i;
 		for(i=0;i<processCount;i++) {
@@ -84,6 +94,8 @@ void algoLCFS(Process processes[], int processCount) {
 				lastComeTime = processes[i].arrivalTime;
 			}
 		}
+		
+		// Wait if no process has arrived 
 		if(lastCome == -1) {
 			for(i=0;i<processCount;i++) {
 				if(processes[i].isDone == 0) {
@@ -103,6 +115,8 @@ void algoLCFS(Process processes[], int processCount) {
 int main(int argc, char *argv[]) {
 	char algorithm = '\x00';
 	int opt;
+
+	// Parsing input flags
 	while ((opt = getopt(argc, argv, "hfl")) != -1) {
 		switch (opt) {
 			case 'f': algorithm = 'f'; break;
@@ -120,6 +134,7 @@ int main(int argc, char *argv[]) {
 				printf("Pass data through standard input (stdin). Each line should represent\n");
 				printf("one process and contain two integers separated by a space:\n");
 				printf("<ArrivalTime> <Duration>\n");
+				printf("Output format: CSV");
 				return 0;
 
 		}
@@ -143,6 +158,7 @@ int main(int argc, char *argv[]) {
 			algoLCFS(processes, processCount);
 			break;
 	}
+	// Printing output as a .csv compatible file
 	printf("ID,Time of arrival,Duration,Time of start,Time of finish,Waiting time,Turnaround\n");
 	int i;
 	for(i=0;i<processCount;i++) {
