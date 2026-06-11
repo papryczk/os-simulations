@@ -109,7 +109,17 @@ int main(int argc, char *argv[]) {
 			case 'l': algorithm = 'l'; break;
 			case 'h':	// fall-through
 			case '?':
-				printf("HELP\n");	// TODO
+				printf("CPU Scheduler Simulator\n\n");
+				printf("Usage: cat data.txt | ./main [OPTION]\n");
+				printf("Or:    ./main [OPTION] < data.txt\n\n");
+				printf("Options:\n");
+				printf("  -f    Run First Come First Served (FCFS) scheduling\n");
+				printf("  -l    Run Last Come First Served (LCFS) scheduling\n");
+				printf("  -h    Display this help message and exit\n\n");
+				printf("Input Format:\n");
+				printf("Pass data through standard input (stdin). Each line should represent\n");
+				printf("one process and contain two integers separated by a space:\n");
+				printf("<ArrivalTime> <Duration>\n");
 				return 0;
 
 		}
