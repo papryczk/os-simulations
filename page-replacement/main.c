@@ -17,7 +17,7 @@ int *parseInput(int *outCount, int *frameSize) {
 	int capacity = INITIAL_CAPACITY;
 	int lineCount = 1;
 
-	// Initial allocation of processes table in memory
+	// Initial allocation of queue in memory
 	int *queue = malloc(capacity * sizeof(int));
 	if (queue == NULL) {
 		fprintf(stderr, "Memory allocation failed!\n");
@@ -36,7 +36,7 @@ int *parseInput(int *outCount, int *frameSize) {
 		lineCount++;
 		if (buffer[0] == '\n') continue;
 
-		// Increase allocated memory for processes table if its too long - dinamic size
+		// Increase allocated memory for queue if its too long - dinamic size
 		if (queueLength >= capacity) {
 			capacity *= 2;
 			int *tmp = realloc(queue, capacity*sizeof(int));
@@ -145,6 +145,7 @@ int main(int argc, char *argv[]) {
 			}
 		}
 
+		// Printing out the results
 		printf("Step %d: [", currentTime);
 		int isFirst = 1;
 		for(int k = 0; k < frameSize; k++) {
