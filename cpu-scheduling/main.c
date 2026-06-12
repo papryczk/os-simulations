@@ -134,7 +134,7 @@ int main(int argc, char *argv[]) {
 				printf("Pass data through standard input (stdin). Each line should represent\n");
 				printf("one process and contain two integers separated by a space:\n");
 				printf("<ArrivalTime> <Duration>\n");
-				printf("Output format: CSV");
+				printf("Output format: CSV\n");
 				return 0;
 
 		}
